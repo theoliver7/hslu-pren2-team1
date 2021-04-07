@@ -6,18 +6,39 @@ class UltraSonic:
     distanceCmd = bytes([])  # change
 
     def get_distance1(self):
-        self.uart.write_uart_cmd(self.distanceCmd)
+        cmd = bytes([0x16, 0xB4, 0xB4, 0x16, 0xB4, 0xB4, 0x0A])
+        response = self.uart.write_uart_cmd(self.distanceCmd)
+        # TODO parse distance
 
     def get_distance2(self):
-        self.uart.write_uart_cmd(self.distanceCmd)
+        cmd = bytes([0x16, 0xB4, 0xB4, 0x16, 0xB4, 0xB4, 0x0A])
+        response = self.uart.write_uart_cmd(self.distanceCmd)
+        # TODO parse distance
 
 
-class Button:
+class Buttons:
     uart = Uart()
-    pushCmd = bytes([])  # change
 
+    # TODO rename to proper side of the robot
     def is_btn1_pushed(self):
-        self.uart.write_uart_cmd(self.pushCmd)
+        cmd = bytes([0x28, 0x01, 0x01, 0x28, 0x01, 0x01, 0x0A])
+        response = self.uart.write_uart_cmd(cmd)
+        print('response byte' + response[2])
+        if response == 255:
+            print("pushed")
+            return True
+        elif response == 0:
+            print("not pushed")
+            return False
 
+    # TODO rename to proper side of the robot
     def is_btn2_pushed(self):
-        self.uart.write_uart_cmd(self.pushCmd)
+        cmd = bytes([0x2D, 0x01, 0x01, 0x2D, 0x01, 0x01, 0x0A])
+        response = self.uart.write_uart_cmd(cmd)
+        print('response byte' + response[2])
+        if response == 255:
+            print("pushed")
+            return True
+        elif response == 0:
+            print("not pushed")
+            return False

@@ -1,5 +1,11 @@
-from motors import FakeMotor
+from motors import StepperMotor
+from sensors import Buttons
+from mountain_climber import MountainClimber
 
-print("lets go")
-motor = FakeMotor()
-motor.start_motor()
+# motor = StepperMotor()
+# motor.go_to_degree(90)
+
+
+climber = MountainClimber()
+
+
