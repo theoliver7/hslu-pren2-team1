@@ -13,6 +13,9 @@ class MountainClimber:
     rotation = motors.StepperMotor()
     lift = motors.LiftMotor()
 
+    def wait_for_start(self):
+        self.buttons.wait_for_startbutton()
+
     def search_identify_pictogram(self):
         raise NotImplementedError
 
