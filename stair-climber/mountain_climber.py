@@ -1,8 +1,10 @@
-import motors
-import sensors
-import video_stream
-import object_detector
 import time
+
+import motors
+import object_detector
+import sensors
+import tensor_setup
+import video_stream
 
 
 ## TODO
@@ -20,8 +22,9 @@ class MountainClimber:
     rotation = motors.StepperMotor()
     lift = motors.LiftMotor()
 
-    videoStream = video_stream.VideoStream()
-    objectDetector = object_detector.ObjectDetector()
+    tensorConfig = tensor_setup.TensorSetup()
+    videoStream = video_stream.VideoStream(resolution=(1280, 720), framerate=30).start()
+    objectDetector = object_detector.ObjectDetector(tensorConfig)
     detectedPictogram = None
 
     # Robot waits for start command
@@ -36,12 +39,12 @@ class MountainClimber:
         # Look for Object for x seconds
         self.rotationDegrees = 0
         while self.detectedPictogram is None: 
-            self.detectedPictogram = objectDetector.analyzeVideo(videoStream, 5)
+            self.detectedPictogram = self.objectDetector.analyzeVideo(self.videoStream, 5)
 
             # If no Object found, turn by x Degrees. If Object found, return to starting Position
             if self.detectedPictogram is None: 
                 self.rotationDegrees += 30
-                self.rotation.go_to_degree(rotationDegrees)
+                self.rotation.go_to_degree(self.rotationDegrees)
             else:
                 self.rotation.go_to_reference()
             time.sleep(1)

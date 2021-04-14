@@ -1,33 +1,30 @@
 # Import packages
-import os
-import argparse
-import cv2
-import numpy as np
-import sys
-import time
 from threading import Thread
-import importlib.util
+
+import cv2
+
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
 # Source - Adrian Rosebrock, PyImageSearch: https://www.pyimagesearch.com/2015/12/28/increasing-raspberry-pi-fps-with-python-and-opencv/
 class VideoStream:
     """Camera object that controls video streaming"""
-    def __init__(self,resolution=(640,480),framerate=30):
+
+    def __init__(self, resolution=(640, 480), framerate=30):
         # Initialize the PiCamera and the camera image stream
-        self.stream = cv2.VideoCapture(STREAM_URL)
+        self.stream = cv2.VideoCapture(0)
         ret = self.stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
-        ret = self.stream.set(3,resolution[0])
-        ret = self.stream.set(4,resolution[1])
-            
+        ret = self.stream.set(3, resolution[0])
+        ret = self.stream.set(4, resolution[1])
+
         # Read first frame from the stream
         (self.grabbed, self.frame) = self.stream.read()
 
-	# Variable to control when the camera is stopped
+        # Variable to control when the camera is stopped
         self.stopped = False
 
     def start(self):
-	# Start the thread that reads frames from the video stream
-        Thread(target=self.update,args=()).start()
+        # Start the thread that reads frames from the video stream
+        Thread(target=self.update, args=()).start()
         return self
 
     def update(self):
@@ -43,9 +40,9 @@ class VideoStream:
             (self.grabbed, self.frame) = self.stream.read()
 
     def read(self):
-	# Return the most recent frame
+        # Return the most recent frame
         return self.frame
 
     def stop(self):
-	# Indicate that the camera and thread should be stopped
+        # Indicate that the camera and thread should be stopped
         self.stopped = True

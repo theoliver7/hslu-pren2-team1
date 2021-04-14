@@ -1,17 +1,32 @@
-from motors import StepperMotor
-from sensors import Buttons
-from mountain_climber import MountainClimber
+import object_centering
+import object_detector
+import tensor_setup
+import video_stream
+
+import object_detector_image
 
 # motor = StepperMotor()
 # motor.go_to_degree(90)
 
 
-climber = MountainClimber()
+# climber = MountainClimber()
 
-climber.wait_for_start()
+# climber.wait_for_start()
+
+# object_detector_image.detect_pictogram_image("test/images/taco_right.jpg","taco")
+
+# object_detector_image.detect_pictogram_image("test/images/paint_left.jpg", "paint")
+# object_centering.detect_pictogram_video("taco")
 print("we are on")
 
-climber.search_identify_pictogram()
-print("pictogram detected")
+tensorConfig = tensor_setup.TensorSetup()
+# videoStream = videostream = video_stream.VideoStream(resolution=(imW, imH), framerate=30).start()
+# objectCentering = object_centering.ObjectCentering(tensorConfig)
+videoStream = video_stream.VideoStream(resolution=(1280, 720), framerate=30).start()
 
+# objectCentering.detect_pictogram_video("taco", video_stream)
 
+objectDetector = object_detector.ObjectDetector(tensorConfig)
+detectedPictogram = objectDetector.analyzeVideo(videoStream, 5)
+videoStream.stop()
+print(detectedPictogram)
