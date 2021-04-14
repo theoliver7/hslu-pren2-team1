@@ -16,6 +16,9 @@ class MountainClimber:
     videoStream = VideoStream()
     objectDetector = ObjectDetector()
     detectedPictogram = None
+    
+    def wait_for_start(self):
+        self.buttons.wait_for_startbutton()
 
     def search_identify_pictogram(self):
         # 1 - Start Video Stream

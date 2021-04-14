@@ -8,4 +8,10 @@ from mountain_climber import MountainClimber
 
 climber = MountainClimber()
 
+climber.wait_for_start()
+print("we are on")
+
+climber.search_identify_pictogram()
+print("pictogram detected")
+
 

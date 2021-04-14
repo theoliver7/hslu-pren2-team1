@@ -1,4 +1,5 @@
 from uart import Uart
+from gpiozero import Button
 
 
 class UltraSonic:
@@ -18,6 +19,7 @@ class UltraSonic:
 
 class Buttons:
     uart = Uart()
+    start_btn = Button(2)  # TODO determine gpio pin config
 
     # TODO rename to proper side of the robot
     def is_btn1_pushed(self):
@@ -42,3 +44,7 @@ class Buttons:
         elif response == 0:
             print("not pushed")
             return False
+
+    def wait_for_startbutton(self):
+        self.start_btn.wait_for_press()
+        print("Button pressed let's go")
