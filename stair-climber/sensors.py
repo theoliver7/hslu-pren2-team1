@@ -1,6 +1,17 @@
 from uart import Uart
 from gpiozero import Button
 
+class LED:
+    uart = Uart()
+
+    def turn_on(self): 
+        cmd = bytes([0x2D, 0x01, 0x01, 0x2D, 0x01, 0x01, 0x0A])
+        response = self.uart.write_uart_cmd(cmd)
+
+    def turn_off(self): 
+        cmd = bytes([0x2D, 0x01, 0x01, 0x2D, 0x01, 0x01, 0x0A])
+        response = self.uart.write_uart_cmd(cmd)
+
 
 class UltraSonic:
     uart = Uart()
