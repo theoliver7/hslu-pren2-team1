@@ -17,6 +17,7 @@ class ObjectDetector:
     floating_model = None
     height = 300
     width = 300
+    labels = []
 
     def __init__(): 
         # Define and parse input arguments
@@ -88,7 +89,7 @@ class ObjectDetector:
     # Analyze an available videoStream with the current model
     # videoStream - running stream from the VideoStream Class
     # ttl - Time to live, in seconds
-    def analyzeVideo(videostream, ttl)
+    def analyzeVideo(self, videostream, ttl):
         object_name = None
         # Function will run for ttl seconds
         addTime = datetime.timedelta(seconds=ttl)
@@ -120,6 +121,7 @@ class ObjectDetector:
 
             # Loop over all detections and draw detection box if confidence is above minimum threshold
             oldScore = 0
+            min_conf_threshold = 50
             for i in range(len(scores)):
                 if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
                     if(scores[i] > oldScore): 

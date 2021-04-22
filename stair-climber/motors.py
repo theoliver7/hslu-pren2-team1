@@ -4,7 +4,7 @@ from uart import Uart
 class MidMotor:
     uart = Uart()
 
-    def accelerate(self):
+    def accelerate(self, speed):
         cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
         self.uart.write_uart_cmd(cmd)
 
@@ -13,11 +13,10 @@ class MidMotor:
         self.uart.write_uart_cmd(cmd)
 
 
-# Do Front and Back Motor move independently ?
 class FrontMotor:
     uart = Uart()
 
-    def accelerate(self):
+    def accelerate(self, speed):
         cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
         self.uart.write_uart_cmd(cmd)
 
@@ -29,7 +28,19 @@ class FrontMotor:
 class BackMotor:
     uart = Uart()
 
-    def accelerate(self):
+    def accelerate(self, speed):
+        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
+        self.uart.write_uart_cmd(cmd)
+
+    def stop(self):
+        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
+        self.uart.write_uart_cmd(cmd)
+
+# combined class for both outer motors so the can be controlled at the same time
+class OuterMotors: 
+    uart = Uart()
+
+    def accelerate(self, speed):
         cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
         self.uart.write_uart_cmd(cmd)
 
@@ -71,5 +82,22 @@ class LiftMotor:
         self.uart.write_uart_cmd(cmd)
 
     def move_back_down(self):
+        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
+        self.uart.write_uart_cmd(cmd)
+
+    def move_both_up(self): 
+        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
+        self.uart.write_uart_cmd(cmd)
+
+    def move_both_down(self):
+        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
+        self.uart.write_uart_cmd(cmd)
+
+    # Needed for middle segment? Is this possible/ok ?
+    def move_frontUp_BackDown(self): 
+        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
+        self.uart.write_uart_cmd(cmd)
+
+    def move_frontDown_BackUp(self):
         cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
         self.uart.write_uart_cmd(cmd)

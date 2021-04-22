@@ -2,12 +2,11 @@ import motors
 import sensors
 import video_stream
 import object_detector
+import time
 
 
 ## TODO
 # Is getting sensor data inside a while-loop to much/to fast?
-# 
-#
 
 class MountainClimber:
     ultra_sonic = sensors.UltraSonic()
@@ -16,6 +15,7 @@ class MountainClimber:
     midMotor = motors.MidMotor()
     frontMotor = motors.FrontMotor()
     backMotor = motors.BackMotor()
+    outerMotors = motors.OuterMotors()
 
     rotation = motors.StepperMotor()
     lift = motors.LiftMotor()
@@ -33,7 +33,6 @@ class MountainClimber:
         # Start Video Stream
         self.videoStream.start()
 
-
         # Look for Object for x seconds
         self.rotationDegrees = 0
         while self.detectedPictogram is None: 
@@ -45,6 +44,7 @@ class MountainClimber:
                 self.rotation.go_to_degree(rotationDegrees)
             else:
                 self.rotation.go_to_reference()
+            time.sleep(1)
 
         # Stop the Video Stream
         self.videoStream.stop()
@@ -55,8 +55,8 @@ class MountainClimber:
         # is this possible with the UltraSonic sensors?
 
         # drive forward
-        self.frontMotor.accelerate() # can i set the speed somewhere? 
-        distance_threshhold = 15 # idk what to put here, what value does get_distance give me?
+        self.frontMotor.accelerate()
+        distance_threshhold = 3.1 # in cm, 3 is minimal value
 
         # noop while robot is far from stairs
         while self.ultra_sonic.get_distance1() > distance_threshhold:
@@ -102,25 +102,29 @@ class MountainClimber:
         # 1 - Lift first segment and place on next step
         self.lift.move_front_up()
         self.midMotor.accelerate()
-        ## when do i stop this?
-        ## how far down do i move front?
+        ## TODO when to stop?
+        ## TODO how far down do i move front?
 
         # 2 - Lift middle segment and place on next step
         ## Move both segmens at same time (up & down)
         ## Both Front and Back motor at same time
+        self.lift.move_frontUp_BackDown()
+        self.outerMotors.accelerate()
+        ## TODO when to stop?
 
         # 3 - Lift last segment and place on next step 
         self.lift.move_back_up()
         self.midMotor.accelerate()
+        ## TODO when to stop?
         self.lift.move_back_down()
 
     # Robot enters normal driving mode (meaning: all segments down, reference position)
     def __normal_driving(self): 
-        # 1 - lower both outer segments
+        # 1 - Turn Robot to starting position
+        self.rotation.go_to_reference()
+        # 2 - lower both outer segments
         self.lift.move_back_down()
         self.lift.move_front_down()
-        # 2 - Turn Robot to starting position
-        self.rotation.go_to_reference()
 
     # Robot enters sideways driving mode (meaning: only middle segment down, 90° turned)
     def __sideways_driving(self):
