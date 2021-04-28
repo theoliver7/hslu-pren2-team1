@@ -1,103 +1,111 @@
 from uart import Uart
 
-
+# DC Motor 1
 class MidMotor:
     uart = Uart()
 
-    def accelerate(self, speed):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
+    def accelerate_forward(self, speed):
+        cmd = bytes([3, 255, speed, 3, 255, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def stop(self):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
-
-
-class FrontMotor:
-    uart = Uart()
-
-    def accelerate(self, speed):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
-
-    def stop(self):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
+    def accelerate_backwards(self, speed):
+        cmd = bytes([5, 255, speed, 5, 255, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
 
-class BackMotor:
-    uart = Uart()
-
-    def accelerate(self, speed):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
-
-    def stop(self):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
-
-# combined class for both outer motors so the can be controlled at the same time
+# DC Motor 2 & DC Motor 3
 class OuterMotors: 
     uart = Uart()
 
-    def accelerate(self, speed):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
+    def accelerate_forward(self, speed):
+        cmd = bytes([9, 255, speed, 9, 255, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def stop(self):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])  # TODO Change
-        self.uart.write_uart_cmd(cmd)
+    def accelerate_backwards(self, speed):
+        cmd = bytes([10, 255, speed, 10, 255, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
 
 class StepperMotor:
     uart = Uart()
 
     def go_to_degree(self, degree):
-        degree_byte: int = int(degree / 1.8)  # TODO ask if oke
-        print(hex(degree_byte))
+        degree_byte: int = int(degree / 1.8)
         degree_hex = hex(degree_byte)
-        degree_cmd = bytes([0x15, 0x00, 0x00, 0x2E, 0x00, 0xFF, 0x0A])  # change
-        degree_cmd[2] = degree_hex
-        print(degree_cmd)
-        self.uart.write_uart_cmd(degree_cmd)
+        cmd = bytes([21, 0, degree_hex, 21, 0, degree_hex, 10]) 
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
     def go_to_reference(self):
-        goto_cmd = bytes([0x16, 0xB4, 0xB4, 0x16, 0xB4, 0xB4, 0x0A])
-        self.uart.write_uart_cmd(goto_cmd)
+        cmd = bytes([22, 180, 180, 22, 180, 180, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
 
 class LiftMotor:
     uart = Uart()
 
-    def move_front_up(self):
-        cmd = bytes([0x18, 0xFF, 0xFF, 0x18, 0xFF, 0xFF, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    def move_front_up(self, speed):
+        cmd = bytes([24, 0, speed, 24, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def move_front_down(self):
-        cmd = bytes([0x1B, 0x00, 0x00, 0x1B, 0xFF, 0xFF, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    def move_front_down(self, speed):
+        cmd = bytes([27, 0, speed, 27, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
+        
+    # TODO - We dont need this? Was in definition file, but move_front_up(0) does the same thing
+    def stop_front(self):
+        cmd = bytes([28, 0, 0, 28, 0, 0, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def move_back_up(self):
-        cmd = bytes([0x1E, 0xFF, 0xFF, 0x1E, 0xFF, 0xFF, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    def move_back_up(self, speed):
+        cmd = bytes([30, 0, speed, 30, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def move_back_down(self):
-        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    def move_back_down(self, speed):
+        cmd = bytes([33, 0, speed, 33, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def move_both_up(self): 
-        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    # Lift robot
+    def move_both_up(self, speed): 
+        # TODO: Byte-Values not yet defined - check if correct
+        cmd = bytes([36, 0, speed, 36, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    def move_both_down(self):
-        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    # Lower robot
+    def move_both_down(self, speed):
+        # TODO: Byte-Values not yet defined - check if correct
+        cmd = bytes([39, 0, speed, 39, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
 
-    # Needed for middle segment? Is this possible/ok ?
-    def move_frontUp_BackDown(self): 
-        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
-        self.uart.write_uart_cmd(cmd)
-
-    def move_frontDown_BackUp(self):
-        cmd = bytes([0x21, 0x00, 0x00, 0x21, 0x00, 0x00, 0x0A])
-        self.uart.write_uart_cmd(cmd)
+    # Climb stair
+    def move_frontDown_BackUp(self, speed):
+        # TODO: Byte-Values not yet defined - check if correct 
+        cmd = bytes([42, 0, speed, 45, 0, speed, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)

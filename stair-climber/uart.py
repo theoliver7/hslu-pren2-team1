@@ -1,4 +1,5 @@
 import serial
+import numpy
 
 # TODO singleton
 class Uart:
@@ -21,3 +22,5 @@ class Uart:
             print("error response from tiny") #TODO: retry?
         self.ser.close()
         return response
+
+
