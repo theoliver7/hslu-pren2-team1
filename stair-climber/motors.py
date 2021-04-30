@@ -105,7 +105,7 @@ class LiftMotor:
     # Climb stair
     def move_frontDown_BackUp(self, speed):
         # TODO: Byte-Values not yet defined - check if correct 
-        cmd = bytes([42, 0, speed, 45, 0, speed, 10])
+        cmd = bytes([42, 0, speed, 42, 0, speed, 10])
         response = self.uart.write_uart_cmd(cmd)
         # Check for valid response
         return list(cmd) == list(response)

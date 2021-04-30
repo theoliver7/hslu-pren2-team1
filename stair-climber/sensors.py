@@ -6,15 +6,15 @@ class LED:
     uart = Uart()
 
     def set_red(self, intensity): 
-        cmd = bytes([51, 0, intensity, 46, 0, intensity, 10])
+        cmd = bytes([51, 0, intensity, 51, 0, intensity, 10])
         response = self.uart.write_uart_cmd(cmd)
 
     def set_green(self, intensity): 
-        cmd = bytes([54, 0, intensity, 46, 0, intensity, 10])
+        cmd = bytes([54, 0, intensity, 54, 0, intensity, 10])
         response = self.uart.write_uart_cmd(cmd)
 
     def set_blue(self, intensity): 
-        cmd = bytes([57, 0, intensity, 46, 0, intensity, 10])
+        cmd = bytes([57, 0, intensity, 57, 0, intensity, 10])
         response = self.uart.write_uart_cmd(cmd)
 
 
@@ -23,14 +23,14 @@ class UltraSonic:
     distanceCmd = bytes([])  # change
 
     def get_distance1(self):
-        cmd = bytes([45, 15, 15, 36, 15, 15, 10])
+        cmd = bytes([45, 15, 15, 45, 15, 15, 10])
         response = self.uart.write_uart_cmd(self.distanceCmd)
 
         distanceValue = response[1] + response[2]
         return distanceValue
 
     def get_distance2(self):
-        cmd = bytes([48, 15, 15, 39, 15, 15, 10])
+        cmd = bytes([48, 15, 15, 48, 15, 15, 10])
         response = self.uart.write_uart_cmd(self.distanceCmd)
 
         distanceValue = response[1] + response[2]
