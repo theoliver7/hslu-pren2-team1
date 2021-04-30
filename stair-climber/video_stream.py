@@ -15,7 +15,6 @@ class VideoStream:
         ret = self.stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
         ret = self.stream.set(3, resolution[0])
         ret = self.stream.set(4, resolution[1])
-
         # Read first frame from the stream
         (self.grabbed, self.frame) = self.stream.read()
 

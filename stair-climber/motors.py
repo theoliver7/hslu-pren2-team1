@@ -37,10 +37,18 @@ class OuterMotors:
 class StepperMotor:
     uart = Uart()
 
-    def go_to_degree(self, degree):
-        degree_byte: int = int(degree / 1.8)
+    def go_to_degree_onground(self, degree):
+        degree_byte = int(degree / 1.8)
         degree_hex = hex(degree_byte)
-        cmd = bytes([21, 0, degree_hex, 21, 0, degree_hex, 10]) 
+        cmd = bytes([22, 0, degree_hex, 22, 0, degree_hex, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
+
+    def go_to_degree_inair(self, degree):
+        degree_byte = int(degree / 1.8)
+        degree_hex = hex(degree_byte)
+        cmd = bytes([21, 0, degree_hex, 21, 0, degree_hex, 10])
         response = self.uart.write_uart_cmd(cmd)
         # Check for valid response
         return list(cmd) == list(response)
@@ -63,13 +71,6 @@ class LiftMotor:
 
     def move_front_down(self, speed):
         cmd = bytes([27, 0, speed, 27, 0, speed, 10])
-        response = self.uart.write_uart_cmd(cmd)
-        # Check for valid response
-        return list(cmd) == list(response)
-        
-    # TODO - We dont need this? Was in definition file, but move_front_up(0) does the same thing
-    def stop_front(self):
-        cmd = bytes([28, 0, 0, 28, 0, 0, 10])
         response = self.uart.write_uart_cmd(cmd)
         # Check for valid response
         return list(cmd) == list(response)

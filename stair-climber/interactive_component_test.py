@@ -17,18 +17,19 @@ def on_press(key):
     # Mid Motor
     if k == "w":
         print("Mid Motor accelerate")
-        climber.midMotor.accelerate()
+        climber.mid_motor.accelerate_forward(50)
     elif k == "s":
         print("Mid Motor Stop")
-        climber.midMotor.stop()
-
+        climber.mid_motor.accelerate_forward(0)
+    elif k == "y":
+        quit()
     # OuterMotors
     elif k == "q":
         print("Outer Motor accelerate")
-        climber.outerMotors.accelerate()
+        climber.outer_motors.accelerate_forward(50)
     elif k == "e":
         print("Outer Motor Stop")
-        climber.outerMotors.stop()
+        climber.outer_motors.accelerate_forward(0)
 
     # Stepper
     elif k == "a":
@@ -36,7 +37,10 @@ def on_press(key):
         climber.rotation.go_to_reference()
     elif k == "d":
         print("go to degree")
-        climber.rotation.go_to_degree(90)
+        climber.rotation.go_to_degree_inair(90)
+    elif k == "f":
+        print("go to degree")
+        climber.rotation.go_to_degree_inair(90)
 
     # Lift Operation
     elif k == "up":
@@ -63,6 +67,9 @@ def on_press(key):
     elif k == "l":
         print("Move Front down")
         climber.lift.move_front_up()
+    elif k == "x":
+        print("Set LED Red")
+        climber.led.set_red(100)
 
 
 # climber.lift.move_front_up()

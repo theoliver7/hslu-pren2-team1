@@ -4,20 +4,14 @@ import tensor_setup
 import video_stream
 
 import object_detector_image
+from motors import StepperMotor
+from mountain_climber import MountainClimber
 
-# motor = StepperMotor()
-# motor.go_to_degree(90)
 
-
-# climber = MountainClimber()
+climber = MountainClimber()
 
 # climber.wait_for_start()
 
-# object_detector_image.detect_pictogram_image("test/images/taco_right.jpg","taco")
-
-# object_detector_image.detect_pictogram_image("test/images/paint_left.jpg", "paint")
-# object_centering.detect_pictogram_video("taco")
-print("we are on")
 
 tensorConfig = tensor_setup.TensorSetup()
 # videoStream = videostream = video_stream.VideoStream(resolution=(imW, imH), framerate=30).start()
@@ -30,3 +24,4 @@ objectDetector = object_detector.ObjectDetector(tensorConfig)
 detectedPictogram = objectDetector.analyzeVideo(videoStream, 5)
 videoStream.stop()
 print(detectedPictogram)
+

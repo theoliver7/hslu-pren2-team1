@@ -16,8 +16,8 @@ class Uart:
         # TODO: figure out when to open and close USB
         self.ser.open()
         print('# bytes sent: '+str(self.ser.write(message)))
-        response = self.ser.read(10)  # TODO: should only be 7 -> tinyk issue
-        print(response)
+        response = self.ser.read(7)  # TODO: should only be 7 -> tinyk issue
+        print(list(response))
         if response == self.error:
             print("error response from tiny") #TODO: retry?
         self.ser.close()

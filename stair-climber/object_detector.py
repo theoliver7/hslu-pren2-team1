@@ -19,7 +19,7 @@ class ObjectDetector:
     labels = []
     min_conf_threshold = 0
 
-    def __init__(self, tensor_config: TensorSetup):
+    def __init__(self, tensor_config):
         # Define and parse input arguments
         # Default values are fine. Make sure detect.tflite & labelmap.txt are accessible
         self.interpreter = tensor_config.interpreter
