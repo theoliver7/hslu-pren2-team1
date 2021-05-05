@@ -1,8 +1,8 @@
-from uart import Uart
-
 # DC Motor 1
 class MidMotor:
-    uart = Uart()
+    def __init__(self, uart):
+        self.uart = uart
+
 
     def accelerate_forward(self, speed):
         cmd = bytes([3, 255, speed, 3, 255, speed, 10])
@@ -19,7 +19,8 @@ class MidMotor:
 
 # DC Motor 2 & DC Motor 3
 class OuterMotors: 
-    uart = Uart()
+    def __init__(self, uart):
+        self.uart = uart
 
     def accelerate_forward(self, speed):
         cmd = bytes([9, 255, speed, 9, 255, speed, 10])
@@ -35,7 +36,8 @@ class OuterMotors:
 
 
 class StepperMotor:
-    uart = Uart()
+    def __init__(self, uart):
+        self.uart = uart
 
     def go_to_degree_onground(self, degree):
         degree_byte = int(degree / 1.8)
@@ -61,7 +63,8 @@ class StepperMotor:
 
 
 class LiftMotor:
-    uart = Uart()
+    def __init__(self, uart):
+        self.uart = uart
 
     def move_front_up(self, speed):
         cmd = bytes([24, 0, speed, 24, 0, speed, 10])

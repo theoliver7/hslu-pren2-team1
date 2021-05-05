@@ -1,10 +1,10 @@
-from uart import Uart
 from gpiozero import Button
 
 
 # TODO: Are the cmd correct? Normaly bit 1 & bit 4 are the same (see motors), but not here, maybe it was forgotten
 class LED:
-    uart = Uart()
+    def __init__(self, uart):
+        self.uart = uart
 
     def set_red(self, intensity):
         cmd = bytes([51, 0, intensity, 51, 0, intensity, 10])
@@ -20,8 +20,8 @@ class LED:
 
 
 class UltraSonic:
-    uart = Uart()
-    distanceCmd = bytes([])  # change
+    def __init__(self, uart):
+        self.uart = uart
 
     def get_distance1(self):
         cmd = bytes([45, 15, 15, 45, 15, 15, 10])

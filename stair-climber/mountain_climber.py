@@ -1,6 +1,7 @@
 import time
 
 from datetime import time
+from uart import Uart
 
 import motors
 import object_detector
@@ -8,27 +9,23 @@ import sensors
 import tensor_setup
 import video_stream
 
-
-## TODO
-# Is getting sensor data inside a while-loop to much/to fast?
-
 class MountainClimber:
-    is_normal_driving = True
-    ultra_sonic = sensors.UltraSonic()
+    uart = Uart()
+
+    ultra_sonic = sensors.UltraSonic(uart)
+    led = sensors.LED(uart)
     buttons = sensors.Buttons()
-    led = sensors.LED()
 
-    mid_motor = motors.MidMotor()
-
-    outer_motors = motors.OuterMotors()
-
-    rotation = motors.StepperMotor()
-    lift = motors.LiftMotor()
+    mid_motor = motors.MidMotor(uart)
+    outer_motors = motors.OuterMotors(uart)
+    rotation = motors.StepperMotor(uart)
+    lift = motors.LiftMotor(uart)
 
     tensor_config = tensor_setup.TensorSetup()
     video_stream = video_stream.VideoStream(resolution=(1280, 720), framerate=30).start()
     objectDetector = object_detector.ObjectDetector(tensor_config)
     detectedPictogram = None
+    is_normal_driving = True
 
     # Robot waits for start command
     def wait_for_start(self):

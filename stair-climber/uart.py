@@ -10,17 +10,19 @@ class Uart:
     ser.parity = serial.PARITY_NONE
     ser.stopbits = serial.STOPBITS_ONE
 
-    error = bytes([0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA])
+    error = bytes([170, 170, 170, 170, 170, 170, 10])
+
+    def __init__(self):
+        self.ser.open()
 
     def write_uart_cmd(self, message):
-        # TODO: figure out when to open and close USB
-        self.ser.open()
         print('# bytes sent: '+str(self.ser.write(message)))
         response = self.ser.read(7)  # TODO: should only be 7 -> tinyk issue
         print(list(response))
+
         if response == self.error:
             print("error response from tiny") #TODO: retry?
-        self.ser.close()
+
         return response
 
 
