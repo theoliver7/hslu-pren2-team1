@@ -17,7 +17,7 @@ class Uart:
 
     def write_uart_cmd(self, message):
         print('# bytes sent: '+str(self.ser.write(message)))
-        response = self.ser.read(7)  # TODO: should only be 7 -> tinyk issue
+        response = self.ser.read(7)
         print(list(response))
 
         if response == self.error:
