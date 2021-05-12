@@ -24,14 +24,14 @@ class UltraSonic:
         self.uart = uart
 
     def get_distance1(self):
-        cmd = bytes([45, 15, 15, 45, 15, 15, 10])
+        cmd = bytes([45, 0, 0, 45, 0, 0, 10])
         response = self.uart.write_uart_cmd(cmd)
 
         distanceValue = response[1] + response[2]
         return distanceValue
 
     def get_distance2(self):
-        cmd = bytes([48, 15, 15, 48, 15, 15, 10])
+        cmd = bytes([48, 0, 0, 48, 0, 0, 10])
         response = self.uart.write_uart_cmd(cmd)
 
         distanceValue = response[1] + response[2]
