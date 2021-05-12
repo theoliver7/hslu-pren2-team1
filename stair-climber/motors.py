@@ -41,8 +41,7 @@ class StepperMotor:
     # Mittleres Segment ist angehoben, degree in Bezug zum Referenzpunk
     def go_to_degree_inair(self, degree):
         degree_byte = int(degree / 1.8)
-        degree_hex = hex(degree_byte)
-        cmd = bytes([21, 0, degree_hex, 21, 0, degree_hex, 10])
+        cmd = bytes([21, 0, degree_byte, 21, 0, degree_byte, 10])
         response = self.uart.write_uart_cmd(cmd)
         # Check for valid response
         return list(cmd) == list(response)
@@ -50,8 +49,7 @@ class StepperMotor:
     # Mittleres Segment ist am boden, degree in Bezug zum Referenzpunk
     def go_to_degree_onground(self, degree):
         degree_byte = int(degree / 1.8)
-        degree_hex = hex(degree_byte)
-        cmd = bytes([22, 0, degree_hex, 22, 0, degree_hex, 10])
+        cmd = bytes([22, 0, degree_byte, 22, 0, degree_byte, 10])
         response = self.uart.write_uart_cmd(cmd)
         # Check for valid response
         return list(cmd) == list(response)

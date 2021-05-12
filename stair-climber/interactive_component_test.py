@@ -76,8 +76,10 @@ def on_press(key):
         climber.lift.climb_stair()
     # LED
     elif k == "x":
-        print("Set LED Red")
-        climber.led.set_red(100)
+        print("Set LED")
+        climber.led.set_red(100)       
+        climber.led.set_blue(100)
+        climber.led.set_green(100)
     
     # Other
     elif k == "y":
