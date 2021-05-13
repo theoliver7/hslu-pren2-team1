@@ -3,7 +3,6 @@ class MidMotor:
     def __init__(self, uart):
         self.uart = uart
 
-
     def accelerate_forward(self, speed):
         cmd = bytes([3, 255, speed, 3, 255, speed, 10])
         response = self.uart.write_uart_cmd(cmd)
