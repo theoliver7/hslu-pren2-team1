@@ -3,7 +3,7 @@ import object_detector
 import tensor_setup
 import video_stream
 
-import object_detector_image
+import object_detector_image_playground
 from motors import StepperMotor
 from mountain_climber import MountainClimber
 

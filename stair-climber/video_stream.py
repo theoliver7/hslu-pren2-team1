@@ -40,7 +40,7 @@ class VideoStream:
 
     def read(self):
         # Return the most recent frame
-        return self.frame
+        return cv2.flip( self.frame , -1 ) # Test if Image is flipped
 
     def stop(self):
         # Indicate that the camera and thread should be stopped
