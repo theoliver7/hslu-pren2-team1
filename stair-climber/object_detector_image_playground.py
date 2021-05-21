@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 
 
-def detect_pictogram_image(image, label):
+def detect_pictogram_image(image):
     MODEL_NAME = "tflite"
     GRAPH_NAME = "model_optimize2_V4.tflite"
     LABELMAP_NAME = "labelmap_path.txt"

@@ -1,3 +1,5 @@
+from time import sleep
+
 from pynput import keyboard
 
 from mountain_climber import MountainClimber
@@ -17,13 +19,13 @@ def on_press(key):
     # Mid Motor
     if k == "w":
         print("Mid Motor accelerate forward")
-        climber.mid_motor.accelerate_forward(200)
+        climber.mid_motor.accelerate_forward(254)
     elif k == "s":
         print("Mid Motor Stop forward")
         climber.mid_motor.accelerate_forward(0)
     if k == "p":
         print("Mid Motor accelerate backwards")
-        climber.mid_motor.accelerate_backwards(200)
+        climber.mid_motor.accelerate_backwards(254)
     elif k == "l":
         print("Mid Motor Stop backwards")
         climber.mid_motor.accelerate_backwards(0)
@@ -55,6 +57,12 @@ def on_press(key):
     elif k == "f":
         print("go to degree on ground")
         climber.rotation.go_to_degree_inair(90)
+        sleep(2)
+        climber.rotation.go_to_degree_inair(135)
+        sleep(2)
+        climber.rotation.go_to_degree_inair(45)
+        sleep(2)
+        climber.rotation.go_to_degree_inair(0)
 
     # Lift Operation
     elif k == "up":
@@ -80,7 +88,12 @@ def on_press(key):
         climber.led.set_red(100)       
         climber.led.set_blue(100)
         climber.led.set_green(100)
-    
+    if k == "1":
+        print("distance 1")
+        print(climber.ultra_sonic.get_distance1())
+    elif k == "2":
+        print("distance 2")
+        print(climber.ultra_sonic.get_distance2())
     # Other
     elif k == "y":
         quit()

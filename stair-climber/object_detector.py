@@ -3,9 +3,11 @@ import datetime
 
 import cv2
 import numpy as np
+import importlib.util
+import os
+import glob
 from time import sleep
 from picamera import PiCamera
-
 
 # Class for Object Detection.
 from tensor_setup import TensorSetup
@@ -35,12 +37,15 @@ class ObjectDetector:
 
     def take_picture(self, path):
         camera = PiCamera()
-        camera.resolution = (2592, 1944) #max resolution
+        camera.resolution = (1280, 720) #max resolution
+        try:
+            camera.start_preview()
+            sleep(3) # wait 3 secs so camera can adjust to light
+            camera.capture(path)
+            camera.stop_preview()
+        finally:
+            camera.close()
 
-        camera.start_preview()
-        sleep(3) # wait 3 secs so camera can adjust to light
-        camera.capture(path)
-        camera.stop_preview()
 
     def analyze_picture (self, path):
         object_name = None
@@ -149,15 +154,6 @@ class ObjectDetector:
                         print(classes[i])
                         print(object_name)
 
-            # All the results have been drawn on the image, now display the image
-            cv2.imshow('Object detector', image)
-
-            # Press any key to continue to next image, or press 'q' to quit
-            if cv2.waitKey(0) == ord('q'):
-                break
-
-        # Clean up
-        cv2.destroyAllWindows()
         return object_name
         
     # Analyze an available videoStream with the current model

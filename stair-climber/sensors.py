@@ -5,6 +5,7 @@ from gpiozero import Button
 class LED:
     def __init__(self, uart):
         self.uart = uart
+        self.set_green(0)
 
     def set_red(self, intensity):
         cmd = bytes([51, 0, intensity, 51, 0, intensity, 10])
@@ -26,28 +27,34 @@ class UltraSonic:
     def get_distance1(self):
         cmd = bytes([45, 0, 0, 45, 0, 0, 10])
         response = self.uart.write_uart_cmd(cmd)
-
+        print(response)
+        # TODO can't calc like that bit shift 16 bit number stretched over 2 byte
         distanceValue = response[1] + response[2]
         return distanceValue
 
     def get_distance2(self):
         cmd = bytes([48, 0, 0, 48, 0, 0, 10])
         response = self.uart.write_uart_cmd(cmd)
-
+        print(response)
+        # TODO can't calc like that bit shift 16 bit number stretched over 2 byte
         distanceValue = response[1] + response[2]
         return distanceValue
 
 
 class Buttons:
     # Buttons
-    start_btn = Button(26)
-    leftFront_btn = Button(19)
-    leftBack_btn = Button(13)
-    rightFront_btn = Button(6)
-    rightBack_btn = Button(0)
+    start_btn = Button(0)
+    leftFront_btn = Button(26, active_state=False)
+    leftBack_btn = Button(13, active_state=False)
+    rightFront_btn = Button(19, active_state=False)
+    rightBack_btn = Button(6, active_state=False)
 
-    # do we need to define this? -> Button for when axis touches the ground
-    # axis_btn = Button()
+    def __init__(self):
+        self.start_btn.when_pressed = lambda: print("Hello, Button start!")
+        self.leftFront_btn.when_pressed = lambda: print("Hello, Button left front!")
+        self.leftBack_btn.when_pressed = lambda: print("Hello, left back!")
+        self.rightFront_btn.when_pressed = lambda: print("Hello, right front!")
+        self.rightBack_btn.when_pressed = lambda: print("Hello, right back")
 
     def is_rightFront_pressed(self):
         if self.rightFront_btn.is_pressed:
@@ -58,7 +65,7 @@ class Buttons:
             return False
 
     def is_rightBack_pressed(self):
-        if self.rightBack_btn.is_pressed:
+        if self.rightBack_btn.is_active:
             print("ressed")
             return True
         else:
@@ -74,7 +81,7 @@ class Buttons:
             return False
 
     def is_leftBack_pressed(self):
-        if self.leftBack_btn.is_pressed:
+        if not self.leftBack_btn.is_active:
             print("ressed")
             return True
         else:

@@ -3,19 +3,20 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
+
 class Pathfinder():
     # Matrix for testing
     matrix = [
-    [1, 1, 1, 1, 1, 1, 1, 1], # Top Platform
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 0, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0],
-    [0, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]  # Floor
+        [1, 1, 1, 1, 1, 1, 1, 1],  # Top Platform
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 0, 0, 0, 1, 1, 1],
+        [1, 1, 1, 1, 0, 1, 1, 1],
+        [1, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 1, 1, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1]  # Floor
     ]
 
-    def compute_path(self,matrix):
+    def compute_path(self, matrix):
         grid = Grid(matrix=matrix)
 
         start = grid.node(0, 6)

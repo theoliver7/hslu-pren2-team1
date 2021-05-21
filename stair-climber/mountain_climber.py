@@ -39,7 +39,6 @@ class MountainClimber:
 
         #Analyze picture
         self.detectedPictogram = self.objectDetector.analyze_picture(img_path)
-
         # Retry on fail (should we turn the robot? Is this even needed?)
         if self.detectedPictogram is None:
             print("No Image recognized, retrying...")
@@ -47,14 +46,16 @@ class MountainClimber:
         
         
         print("Image recognized: " + self.detectedPictogram)
-        led.set_green(200)
+        self.led.set_green(200)
 
     # Robot drives to stairs
     def drive_to_stairs(self):
         print("Driving to stairs")
-        speed = 200
+        speed = 254
 
         # drive forward
+        self.rotation.go_to_reference_onground()
+        self.lift.driveMode_middleUp()
         self.outer_motors.accelerate_forward(speed)
         distance_threshhold = 5  # in cm
 
@@ -70,7 +71,7 @@ class MountainClimber:
     # Robot climbs up stairs
     #TODO: Number of stairs from image-recognition
     def climb_stairs(self):
-        number_of_stairs = 5 
+        number_of_stairs = 6
 
         for i in range(number_of_stairs + 1):
             self.__climb_one_stair()
