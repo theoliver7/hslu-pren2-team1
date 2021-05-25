@@ -6,6 +6,8 @@ class LED:
     def __init__(self, uart):
         self.uart = uart
         self.set_green(0)
+        self.set_red(0)
+        self.set_blue(0)
 
     def set_red(self, intensity):
         cmd = bytes([51, 0, intensity, 51, 0, intensity, 10])
