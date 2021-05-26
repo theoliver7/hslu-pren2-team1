@@ -16,7 +16,7 @@ class Pathfinder:
     height = 300
     width = 300
     labels = []
-    min_conf_threshold = 0.05
+    min_conf_threshold = 0.1
 
     def __init__(self, tensor_config):
         # Define and parse input arguments
@@ -37,8 +37,8 @@ class Pathfinder:
 
         # Load image and resize to expected shape [1xHxWx3]
         image = cv2.imread(image_path)
-        image = cv2.flip(image, 0)
-        image = cv2.flip(image, 1)
+        # image = cv2.flip(image, 0)
+        # image = cv2.flip(image, 1)
         image_center = image.shape[1] / 2
         print("center of the image: " + str(image_center))
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -96,6 +96,10 @@ class Pathfinder:
         steps = np.array(steps)
 
         stair_matrix = np.ones((7, 8))
+
+        if len(steps) == 0 or len(bricks) == 0:
+            return stair_matrix
+
         sorted_steps = steps[steps[:, 1].argsort()[::-1][:len(steps)]]
         sorted_bricks = bricks[bricks[:, 1].argsort()[::-1][:len(bricks)]]
         # sorted_steps = [[180, 526, 1102, 562],
@@ -116,15 +120,20 @@ class Pathfinder:
             step_length = step[2] - step[0]
             raster_size = int(step_length / 8)
             print("step" + str(step))
-            print("step lenght: " + str(step_length))
-            print("raster size: " + str(raster_size))
-            for brick in sorted_bricks:
+
+            for idx2, brick in enumerate(sorted_bricks):
                 middle_of_brick = int((brick[3] + brick[1]) / 2)
                 print("middle of brick" + str(middle_of_brick))
-                if step[3] + 5 > middle_of_brick > sorted_steps[idx + 1][3] + 5:  # 5 is a buffer is the stone is taller
+                if (step[3] + 5) > middle_of_brick > (sorted_steps[idx + 1][3] - 5):  # 5 is a buffer is the stone is taller
                     print("Brick: " + str(brick) + " is on " + str(idx + 1) + " step")
-                    sorted_bricks.remove(brick)
+                    # sorted_bricks.remove(brick)
+                    try:
+                        sorted_bricks = np.delete(sorted_bricks, idx2, axis=0)
+                    except(IndexError):
+                        print("maybe oke")
                     # than next step
+                    print("step lenght: " + str(step_length))
+                    print("raster size: " + str(raster_size))
                     relativ_brick_pos1 = brick[0] - step[0]  # subtract the step start left
                     relativ_brick_pos2 = brick[2] - step[0]
                     first_field = int(relativ_brick_pos1 / raster_size)
@@ -134,10 +143,11 @@ class Pathfinder:
                     for i in range(first_field, second_field + 1):
                         stair_matrix[5 - idx, i] = 0  # 7 floors - bottom and top floor = 5
                     print(stair_matrix)
+
                 else:
                     print("checking next step")
                     break
-
+        print(sorted_bricks)
         print("------------------------------")
 
         # All the results have been drawn on the image, now display the image
@@ -148,7 +158,7 @@ class Pathfinder:
     # Press any key to continue to next image, or press 'q' to quit
     def compute_path(self, matrix, start, end):
         grid = Grid(matrix=matrix)
-
+        print(start, end)
         start = grid.node(start[0], start[1])
         end = grid.node(end[0], end[1])
 

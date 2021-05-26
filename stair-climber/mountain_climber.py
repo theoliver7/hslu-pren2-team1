@@ -1,28 +1,24 @@
 import time
 
-import motors
 import object_detector
-import sensors
 import tensor_setup
-from camera import Camera
 from path_finder import Pathfinder
-from uart import Uart
 
 
 class MountainClimber:
-    uart = Uart()
-
-    ultra_sonic = sensors.UltraSonic(uart)
-    led = sensors.LED(uart)
-    buttons = sensors.Buttons()
-
-    mid_motor = motors.MidMotor(uart)
-    outer_motors = motors.OuterMotors(uart)
-    rotation = motors.StepperMotor(uart)
-    lift = motors.LiftMotor(uart)
+    # uart = Uart()
+    #
+    # ultra_sonic = sensors.UltraSonic(uart)
+    # led = sensors.LED(uart)
+    # buttons = sensors.Buttons()
+    #
+    # mid_motor = motors.MidMotor(uart)
+    # outer_motors = motors.OuterMotors(uart)
+    # rotation = motors.StepperMotor(uart)
+    # lift = motors.LiftMotor(uart)
 
     picto_tensor_config = tensor_setup.TensorSetup("detect.tflite", "labelmap.txt")
-    stair_tensor_config = tensor_setup.TensorSetup("model_optimize2_V6.tflite", "labelmap_path.txt")
+    stair_tensor_config = tensor_setup.TensorSetup("model_optimize2_V8.tflite", "labelmap_path.txt")
 
     object_detector = object_detector.PictogramDetector(picto_tensor_config)
     path_finder = Pathfinder(stair_tensor_config)
@@ -32,11 +28,11 @@ class MountainClimber:
     is_normal_driving = True
     # TODO update with correct position
     picto_dict = {
-        "Hammer": 0,
-        "Taco": 2,
+        "Hammer": 1,
+        "Taco": 3,
         "Ruler": 4,
         "Paint": 5,
-        "Pen": 7
+        "Pen": 6
     }
 
     # Robot waits for start command
@@ -48,7 +44,7 @@ class MountainClimber:
         print("Looking for pictogram")
         img_path = "/home/pi/Desktop/picto.jpg"
         # Take picture
-        Camera.take_picture_to_path(img_path)
+        # Camera.take_picture_to_path(img_path)
 
         # Analyze picture
         self.detectedPictogram = self.object_detector.analyze_picture(img_path)
@@ -64,7 +60,9 @@ class MountainClimber:
     def plan_path(self):
         print("Starting path planning")
         img = "/home/pi/Desktop/stair.jpg"
-        Camera.take_picture_to_path(img)
+        img = "test/images/stair8.jpg"
+        self.detectedPictogram = "Hammer"
+        # Camera.take_picture_to_path(img)
         matrix = self.path_finder.transform_image_to_matrix(img)
         # TODO determine start position
         self.path = self.path_finder.compute_path(matrix, (4, 6), (self.picto_dict.get(self.detectedPictogram), 0))
