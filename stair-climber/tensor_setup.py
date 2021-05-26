@@ -17,7 +17,7 @@ class TensorSetup:
         # Define and parse input arguments
         # Default values are fine. Make sure detect.tflite & labelmap.txt are accessible
 
-        MODEL_NAME = "/home/pi/Desktop/tflite/"
+        MODEL_NAME = "/home/pi/Desktop/stair-climber/tflite"
         GRAPH_NAME = graph_name
         LABELMAP_NAME = labelmap_name
         RES = "1280x720"

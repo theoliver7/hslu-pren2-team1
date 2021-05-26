@@ -16,7 +16,7 @@ class Pathfinder:
     height = 300
     width = 300
     labels = []
-    min_conf_threshold = 0.1
+    min_conf_threshold = 0.05
 
     def __init__(self, tensor_config):
         # Define and parse input arguments
@@ -37,7 +37,8 @@ class Pathfinder:
 
         # Load image and resize to expected shape [1xHxWx3]
         image = cv2.imread(image_path)
-
+        image = cv2.flip(image, 0)
+        image = cv2.flip(image, 1)
         image_center = image.shape[1] / 2
         print("center of the image: " + str(image_center))
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -110,7 +111,7 @@ class Pathfinder:
         print(sorted_bricks)
         print(sorted_steps)
         print()
-
+        cv2.imwrite("test.jpg", image)
         for idx, step in enumerate(sorted_steps[:-1]):  # iterate all but last
             step_length = step[2] - step[0]
             raster_size = int(step_length / 8)
@@ -141,8 +142,7 @@ class Pathfinder:
 
         # All the results have been drawn on the image, now display the image
         rando = random.randint(0, 10000)
-        # cv2.imshow("hi", image)
-        # cv2.waitKey(100000)
+
         return stair_matrix
 
     # Press any key to continue to next image, or press 'q' to quit

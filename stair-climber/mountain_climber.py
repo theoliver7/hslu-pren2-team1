@@ -33,10 +33,10 @@ class MountainClimber:
     # TODO update with correct position
     picto_dict = {
         "Hammer": 0,
-        "Ruler": 2,
-        "Paint": 4,
-        "Taco": 5,
-        "Wrench": 7
+        "Taco": 2,
+        "Ruler": 4,
+        "Paint": 5,
+        "Pen": 7
     }
 
     # Robot waits for start command
@@ -77,16 +77,17 @@ class MountainClimber:
 
         # drive forward
         self.lift.driveMode_middleUp()
+        time.sleep(3)
         self.outer_motors.accelerate_forward(speed)
         distance_threshhold = 5  # in cm
 
         # noop while robot is far from stairs
         while self.ultra_sonic.get_distance1() > distance_threshhold:
+            time.sleep(0.5)
             pass
 
         # Closer than threshhold
-        self.outer_motors.accelerate_forward(100)
-        time.sleep(500)  # maybe drive a little further to make sure we are touching the stairs?
+        print("slowing down")
         self.outer_motors.accelerate_forward(0)
 
     # Robot climbs up stairs
@@ -105,7 +106,6 @@ class MountainClimber:
                 if instruction[0] < instruction[1]:
                     print("going right then up ")
                     degree = 90
-                    self.rotation.go_to_degree_inair(90)  # determine correct degree
                 elif instruction[0] > instruction[1]:
                     print("going left then up")
                     degree = 270
@@ -119,6 +119,8 @@ class MountainClimber:
                 time.sleep(1 * instructions_length)
                 self.mid_motor.accelerate_forward(0)
                 self.lift.lower_outer_axes()
+                self.lift.driveMode_middleUp()
+                self.rotation.go_to_reference_inair()
 
             if instructions_cnt != idx:
                 self.__climb_one_stair()

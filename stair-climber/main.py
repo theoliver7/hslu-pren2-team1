@@ -5,6 +5,8 @@
 #
 # import object_detector_image_playground
 # from motors import StepperMotor
+from time import sleep
+
 import tensor_setup
 from mountain_climber import MountainClimber
 
@@ -13,7 +15,7 @@ from path_finder import Pathfinder
 
 climber = MountainClimber()
 climber.plan_path()
-climber.climb_stairs()
+# climber.climb_stairs()
 
 
 # Wait for start_button

@@ -28,10 +28,11 @@ class UltraSonic:
 
     def get_distance1(self):
         cmd = bytes([45, 0, 0, 45, 0, 0, 10])
-        response = self.uart.write_uart_cmd(cmd)
+        response = list(self.uart.write_uart_cmd(cmd))
         print(response)
         # TODO can't calc like that bit shift 16 bit number stretched over 2 byte
         distanceValue = response[1] + response[2]
+        print(distanceValue)
         return distanceValue
 
     def get_distance2(self):
@@ -46,10 +47,10 @@ class UltraSonic:
 class Buttons:
     # Buttons
     start_btn = Button(0)
-    leftFront_btn = Button(26, active_state=False)
-    leftBack_btn = Button(13, active_state=False)
-    rightFront_btn = Button(19, active_state=False)
-    rightBack_btn = Button(6, active_state=False)
+    leftFront_btn = Button(26, pull_up=None, active_state=False)
+    leftBack_btn = Button(13, pull_up=None, active_state=False)
+    rightFront_btn = Button(19, pull_up=None, active_state=True)
+    rightBack_btn = Button(6, pull_up=None, active_state=True)
 
     def __init__(self):
         self.start_btn.when_pressed = lambda: print("Hello, Button start!")
