@@ -1,21 +1,25 @@
 import time
 
+import motors
 import object_detector
+import sensors
 import tensor_setup
+from camera import Camera
 from path_finder import Pathfinder
+from uart import Uart
 
 
 class MountainClimber:
-    # uart = Uart()
-    #
-    # ultra_sonic = sensors.UltraSonic(uart)
-    # led = sensors.LED(uart)
-    # buttons = sensors.Buttons()
-    #
-    # mid_motor = motors.MidMotor(uart)
-    # outer_motors = motors.OuterMotors(uart)
-    # rotation = motors.StepperMotor(uart)
-    # lift = motors.LiftMotor(uart)
+    uart = Uart()
+
+    ultra_sonic = sensors.UltraSonic(uart)
+    led = sensors.LED(uart)
+    buttons = sensors.Buttons()
+
+    mid_motor = motors.MidMotor(uart)
+    outer_motors = motors.OuterMotors(uart)
+    rotation = motors.StepperMotor(uart)
+    lift = motors.LiftMotor(uart)
 
     picto_tensor_config = tensor_setup.TensorSetup("detect.tflite", "labelmap.txt")
     stair_tensor_config = tensor_setup.TensorSetup("model_optimize2_V8.tflite", "labelmap_path.txt")
@@ -44,7 +48,7 @@ class MountainClimber:
         print("Looking for pictogram")
         img_path = "/home/pi/Desktop/picto.jpg"
         # Take picture
-        # Camera.take_picture_to_path(img_path)
+        Camera.take_picture_to_path(img_path)
 
         # Analyze picture
         self.detectedPictogram = self.object_detector.analyze_picture(img_path)
@@ -60,9 +64,9 @@ class MountainClimber:
     def plan_path(self):
         print("Starting path planning")
         img = "/home/pi/Desktop/stair.jpg"
-        img = "test/images/stair8.jpg"
+        # img = "test/images/stair8.jpg"
         self.detectedPictogram = "Hammer"
-        # Camera.take_picture_to_path(img)
+        Camera.take_picture_to_path(img)
         matrix = self.path_finder.transform_image_to_matrix(img)
         # TODO determine start position
         self.path = self.path_finder.compute_path(matrix, (4, 6), (self.picto_dict.get(self.detectedPictogram), 0))
@@ -77,10 +81,10 @@ class MountainClimber:
         self.lift.driveMode_middleUp()
         time.sleep(3)
         self.outer_motors.accelerate_forward(speed)
-        distance_threshhold = 5  # in cm
+        distance_threshhold = 70  # in cm
 
         # noop while robot is far from stairs
-        while self.ultra_sonic.get_distance1() > distance_threshhold:
+        while self.ultra_sonic.get_distance1() > distance_threshhold and self.ultra_sonic.get_distance2() > distance_threshhold:
             time.sleep(0.5)
             pass
 
@@ -107,7 +111,7 @@ class MountainClimber:
                 elif instruction[0] > instruction[1]:
                     print("going left then up")
                     degree = 270
-                #Todo check this stuff
+                # Todo check this stuff
 
                 self.lift.driveMode_middleUp()
                 self.rotation.go_to_degree_inair(degree)

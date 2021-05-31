@@ -16,7 +16,7 @@ class Pathfinder:
     height = 300
     width = 300
     labels = []
-    min_conf_threshold = 0.1
+    min_conf_threshold = 0.01
 
     def __init__(self, tensor_config):
         # Define and parse input arguments
@@ -56,8 +56,7 @@ class Pathfinder:
         self.interpreter.invoke()
 
         # Retrieve detection results
-        boxes = self.interpreter.get_tensor(self.output_details[0]['index'])[
-            0]  # Bounding box coordinates of detected objects
+        boxes = self.interpreter.get_tensor(self.output_details[0]['index'])[0]  # Bounding box coordinates of detected objects
         classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]  # Class index of detected objects
         scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]  # Confidence of detected objects
 
@@ -98,6 +97,7 @@ class Pathfinder:
         stair_matrix = np.ones((7, 8))
 
         if len(steps) == 0 or len(bricks) == 0:
+            print("no steps or bricks found exiting")
             return stair_matrix
 
         sorted_steps = steps[steps[:, 1].argsort()[::-1][:len(steps)]]

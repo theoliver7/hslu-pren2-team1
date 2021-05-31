@@ -22,7 +22,8 @@ class Uart:
 
         if response == self.error:
             print("error response from tiny") #TODO: retry?
-
+            response = self.ser.read(7)
+            print("uart retry response: " + str(list(response)))
         return response
 
 
