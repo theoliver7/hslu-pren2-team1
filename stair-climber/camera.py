@@ -5,8 +5,9 @@ from picamera.array import PiRGBArray
 class Camera:
     @staticmethod
     def take_picture_to_path(path):
-        camera = PiCamera()
-        camera.resolution = (1280, 720)  # max resolution
+        camera = PiCamera(sensor_mode=4,resolution='1280x720')
+        #investigate fov https://picamera.readthedocs.io/en/release-1.13/fov.html
+
         try:
             camera.start_preview()
             sleep(3)  # wait 3 secs so camera can adjust to light

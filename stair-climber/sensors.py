@@ -65,38 +65,6 @@ class Buttons:
         self.rightFront_btn.when_pressed = lambda: print("Hello, right front!")
         self.rightBack_btn.when_pressed = lambda: print("Hello, right back")
 
-    def is_rightFront_pressed(self):
-        if self.rightFront_btn.is_pressed:
-            print("ressed")
-            return True
-        else:
-            print("not pressed")
-            return False
-
-    def is_rightBack_pressed(self):
-        if self.rightBack_btn.is_active:
-            print("ressed")
-            return True
-        else:
-            print("not pressed")
-            return False
-
-    def is_leftFront_pressed(self):
-        if self.leftFront_btn.is_pressed:
-            print("ressed")
-            return True
-        else:
-            print("not pressed")
-            return False
-
-    def is_leftBack_pressed(self):
-        if not self.leftBack_btn.is_active:
-            print("ressed")
-            return True
-        else:
-            print("not pressed")
-            return False
-
     def wait_for_startbutton(self):
         self.start_btn.wait_for_press()
         print("Button pressed let's go")

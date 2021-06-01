@@ -1,80 +1,94 @@
 import time
 
 import motors
-import object_detector
+import pictogram_centering
+import pictogram_detector
 import sensors
 import tensor_setup
 from camera import Camera
 from path_finder import Pathfinder
 from uart import Uart
+from video_stream import VideoStream
 
 
 class MountainClimber:
-    uart = Uart()
 
-    ultra_sonic = sensors.UltraSonic(uart)
-    led = sensors.LED(uart)
-    buttons = sensors.Buttons()
+    def __init__(self):
+        self.uart = Uart()
+        self.ultra_sonic = sensors.UltraSonic(self.uart)
+        self.led = sensors.LED(self.uart)
+        self.buttons = sensors.Buttons()
 
-    mid_motor = motors.MidMotor(uart)
-    outer_motors = motors.OuterMotors(uart)
-    rotation = motors.StepperMotor(uart)
-    lift = motors.LiftMotor(uart)
+        self.mid_motor = motors.MidMotor(self.uart)
+        self.outer_motors = motors.OuterMotors(self.uart)
+        self.rotation = motors.StepperMotor(self.uart)
+        self.lift = motors.LiftMotor(self.uart)
 
-    picto_tensor_config = tensor_setup.TensorSetup("detect.tflite", "labelmap.txt")
-    stair_tensor_config = tensor_setup.TensorSetup("model_optimize2_V8.tflite", "labelmap_path.txt")
+        self.picto_tensor_config = tensor_setup.TensorSetup("detect_picto_v2.tflite", "labelmap.txt")
+        self.stair_tensor_config = tensor_setup.TensorSetup("detect_brick_v2.tflite", "labelmap_path.txt")
 
-    object_detector = object_detector.PictogramDetector(picto_tensor_config)
-    path_finder = Pathfinder(stair_tensor_config)
+        self.picto_detector = pictogram_detector.PictogramDetector(self.picto_tensor_config)
+        self.picto_centering = pictogram_centering.PictogramCentering(self.picto_tensor_config)
+        self.path_finder = Pathfinder(self.stair_tensor_config)
 
-    detectedPictogram = None
-    path = None
-    is_normal_driving = True
-    # TODO update with correct position
-    picto_dict = {
-        "Hammer": 1,
-        "Taco": 3,
-        "Ruler": 4,
-        "Paint": 5,
-        "Pen": 6
-    }
+        self.video_stream = VideoStream()
+
+        self.detected_pictogram = None
+        self.path = None
+        self.is_normal_driving = True
+        self.touched = False
+        # TODO update with correct position
+        self.picto_dict = {
+            "Hammer": 1,
+            "Taco": 3,
+            "Ruler": 4,
+            "Paint": 5,
+            "Pen": 6
+        }
+
+        self.buttons.whatever_btn.when_pressed = lambda: print("Hello, WhateverButton start!")
+        self.buttons.leftFront_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0); self.touched = True
+        self.buttons.leftBack_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0); self.touched = True
+        self.buttons.rightFront_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0);self.touched = True
+        self.buttons.rightBack_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0);self.touched = True
 
     # Robot waits for start command
     def wait_for_start(self):
+        print("ready waiting for start cmd")
         self.buttons.wait_for_startbutton()
 
     # Robot looks for and identifies the given pictogram
     def search_identify_pictogram(self):
-        print("Looking for pictogram")
+        print("looking for pictogram")
         img_path = "/home/pi/Desktop/picto.jpg"
         # Take picture
         Camera.take_picture_to_path(img_path)
 
         # Analyze picture
-        self.detectedPictogram = self.object_detector.analyze_picture(img_path)
+        self.detected_pictogram = self.picto_detector.analyze_picture(img_path)
         # Retry on fail (should we turn the robot? Is this even needed?)
-        if self.detectedPictogram is None:
+        if self.detected_pictogram is None:
             print("No Image recognized, retrying...")
             self.search_identify_pictogram()
 
-        print("Image recognized: " + self.detectedPictogram)
+        print("image recognized: " + self.detected_pictogram)
         self.led.set_green(200)
         self.rotation.go_to_reference_onground()
 
     def plan_path(self):
-        print("Starting path planning")
+        print("starting path planning")
         img = "/home/pi/Desktop/stair.jpg"
-        # img = "test/images/stair8.jpg"
-        self.detectedPictogram = "Hammer"
+        # img = "C:/dev/git/pren2-team1/stair-climber/test/images/stair8.jpg"
+        # self.detectedPictogram = "Hammer"
         Camera.take_picture_to_path(img)
-        matrix = self.path_finder.transform_image_to_matrix(img)
+        matrix, start = self.path_finder.transform_image_to_matrix(img)
         # TODO determine start position
-        self.path = self.path_finder.compute_path(matrix, (4, 6), (self.picto_dict.get(self.detectedPictogram), 0))
+        self.path = self.path_finder.compute_path(matrix, (start, 6), (self.picto_dict.get(self.detected_pictogram), 0))
         print(self.path)
 
     # Robot drives to stairs
     def drive_to_stairs(self):
-        print("Driving to stairs")
+        print("driving to stairs")
         speed = 254
 
         # drive forward
@@ -84,7 +98,8 @@ class MountainClimber:
         distance_threshhold = 70  # in cm
 
         # noop while robot is far from stairs
-        while self.ultra_sonic.get_distance1() > distance_threshhold and self.ultra_sonic.get_distance2() > distance_threshhold:
+        while self.ultra_sonic.get_distance1() > distance_threshhold \
+                and self.ultra_sonic.get_distance2() > distance_threshhold:
             time.sleep(0.5)
             pass
 
@@ -95,7 +110,6 @@ class MountainClimber:
     # Robot climbs up stairs
     # TODO: Number of stairs from image-recognition
     def climb_stairs(self):
-        number_of_stairs = 6
         instructions = self.__transform_path()
         print(instructions)
         instructions_cnt = len(instructions) - 1
@@ -123,20 +137,30 @@ class MountainClimber:
                 self.lift.lower_outer_axes()
                 self.lift.driveMode_middleUp()
                 self.rotation.go_to_reference_inair()
+                if self.touched: print("I hit a brick or so")
 
             if instructions_cnt != idx:
                 self.__climb_one_stair()
 
-    # Robot climbs on single stair
+    def drive_into_flag(self):
+        print("going to flag")
+        self.lift.driveMode_middleUp()
+        self.rotation.go_to_degree_inair(90)
+        self.lift.driveMode_middleDown()
+        self.lift.rotationMode()
+        self.video_stream.start()
+        self.picto_centering.center_robot_on_pictogram(self.detected_pictogram,self.video_stream, self)
+
+        # Robot climbs on single stair
     def __climb_one_stair(self):
         # self.__find_climable_position()
-        print("Start climbing to next step")
+        print("start climbing to next step")
         self.lift.climb_stair()
 
     # Robot finds open path and positions himself in front ready to climb the next step
-    # TODO: Find position by looking at PathFinding Matrix 
+    # TODO: Find position by looking at PathFinding Matrix
     def __find_climable_position(self):
-        print("Looking for climable position")
+        print("looking for climable position")
         # How do we know how far to the left/right we can go infront of the first step
         clear_threshhold = 10
         speed = 200
