@@ -1,6 +1,6 @@
-from mountain_climber import MountainClimber
+from climber import Climber
 
-climber = MountainClimber()
+climber = Climber()
 
 # Wait for start_button
 # climber.wait_for_start()
