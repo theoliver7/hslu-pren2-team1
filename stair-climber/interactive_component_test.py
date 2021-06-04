@@ -2,9 +2,9 @@ from time import sleep
 
 from pynput import keyboard
 
-from mountain_climber import MountainClimber
+from climber import Climber
 
-climber = MountainClimber()
+climber = Climber()
 
 
 def on_press(key):
