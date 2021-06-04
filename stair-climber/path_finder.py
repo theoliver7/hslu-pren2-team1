@@ -83,11 +83,14 @@ class Pathfinder:
 
     # Press any key to continue to next image, or press 'q' to quit
     def compute_path(self, matrix, start, end):
-        grid = Grid(matrix=matrix)
-        print(start, end)
-        start = grid.node(start[0], start[1])
-        end = grid.node(end[0], end[1])
 
+        grid = Grid(matrix=matrix)
+
+        print(start, end)
+        # start = grid.node(start[0], start[1])
+        # end = grid.node(end[0], end[1])
+        start = grid.node(4, 6)
+        end = grid.node(4, 0)
         finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
         path, runs = finder.find_path(start, end, grid)
 
@@ -180,5 +183,22 @@ class Pathfinder:
                 #             2)  # Draw label text
         bricks = np.array(bricks)
         steps = np.array(steps)
-        cv2.imwrite("test.jpg", image)
+        cv2.imwrite("debug.jpg", image)
         return bricks, steps, image_center
+
+    @staticmethod
+    def transform_path(path):
+        tmp_step = 99
+        tmp_step_directions = None
+        list_of_instructions = list()
+        for step in path:
+            if tmp_step != step[1]:
+                if tmp_step_directions is not None: list_of_instructions.append(tmp_step_directions)
+                tmp_step_directions = list()
+                tmp_step = step[1]
+                tmp_step_directions.append(step[0])
+            else:
+                tmp_step_directions.append(step[0])
+        list_of_instructions.append(tmp_step_directions)
+
+        return list_of_instructions

@@ -20,7 +20,6 @@ class TensorSetup:
         MODEL_NAME = "tflite"
         GRAPH_NAME = graph_name
         LABELMAP_NAME = labelmap_name
-        RES = "1280x720"
 
         # Import TensorFlow libraries
         # If tflite_runtime is installed, import interpreter from tflite_runtime, else import from regular tensorflow

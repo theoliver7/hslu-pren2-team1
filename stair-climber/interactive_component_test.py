@@ -50,10 +50,11 @@ def on_press(key):
         climber.rotation.go_to_reference_inair()
     elif k == "b":
         print("go to reference on ground")
+        climber.rotation.go_to_degree_onground(340)
         climber.rotation.go_to_reference_onground()
     elif k == "d":
         print("go to degree in air")
-        climber.rotation.go_to_degree_inair(90)
+        climber.rotation.go_to_degree_inair(50)
     elif k == "f":
         print("go to degree on ground")
         climber.rotation.go_to_degree_inair(90)

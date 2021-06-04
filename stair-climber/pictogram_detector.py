@@ -1,11 +1,7 @@
-# Import packages
 import datetime
 
 import cv2
 import numpy as np
-
-
-# Class for Object Detection.
 
 
 class PictogramDetector:
@@ -19,8 +15,6 @@ class PictogramDetector:
     min_conf_threshold = 0.5
 
     def __init__(self, tensor_config):
-        # Define and parse input arguments
-        # Default values are fine. Make sure detect.tflite & labelmap.txt are accessible
         self.interpreter = tensor_config.interpreter
         self.input_details = tensor_config.input_details
         self.output_details = tensor_config.output_details
@@ -38,10 +32,10 @@ class PictogramDetector:
         input_mean = 127.5
         input_std = 127.5
 
-        # Loop over every image and perform detection
-
-        # Load image and resize to expected shape [1xHxWx3]
         image = cv2.imread(path)
+        image = cv2.flip(image, 0)
+        image = cv2.flip(image, 1)
+
         image_center = image.shape[1] / 2
         print("center of the image: " + str(image_center))
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -49,7 +43,7 @@ class PictogramDetector:
         image_resized = cv2.resize(image_rgb, (self.width, self.height))
         input_data = np.expand_dims(image_resized, axis=0)
 
-        # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
+        # Normalize pixel values if using a floating model
         if self.floating_model:
             input_data = (np.float32(input_data) - input_mean) / input_std
 
@@ -58,30 +52,24 @@ class PictogramDetector:
         self.interpreter.invoke()
 
         # Retrieve detection results
-        boxes = self.interpreter.get_tensor(self.output_details[0]['index'])[
-            0]  # Bounding box coordinates of detected objects
+        # Bounding box coordinates of detected objects
         classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]  # Class index of detected objects
         scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]  # Confidence of detected objects
-        # num = interpreter.get_tensor(output_details[3]['index'])[0]  # Total number of detected objects (inaccurate and not needed)
 
-        # Loop over all detections and draw detection box if confidence is above minimum threshold
-        oldScore = 0
+        old_score = 0
+        tmp_name = self.labels[int(classes[0])]
         for i in range(len(scores)):
-            if ((scores[i] > self.min_conf_threshold) and (scores[i] <= 1.0)):
-
-                # Draw label
-                object_name = self.labels[int(classes[i])]  # Look up object name from "labels" array using class index
-
-                print(object_name)
-                if scores[i] > oldScore:
-                    oldScore = scores[i]
+            if (scores[i] > self.min_conf_threshold) and (scores[i] <= 1.0):
+                if scores[i] > old_score:
+                    old_score = scores[i]
                     # Get Label
-                    object_name = self.labels[
-                        int(classes[i])]  # Look up object name from "labels" array using class index
+                    object_name = self.labels[int(classes[i])]
                     print(scores[i])
                     print(classes[i])
-                    print(object_name)
+                    print("found better match:" + object_name)
 
+        if object_name is None:
+            object_name = tmp_name
         return object_name
 
     # Analyze an available videoStream with the current model
@@ -114,8 +102,8 @@ class PictogramDetector:
             self.interpreter.invoke()
 
             # Retrieve detection results
-            boxes = self.interpreter.get_tensor(self.output_details[0]['index'])[
-                0]  # Bounding box coordinates of detected objects
+            # Bounding box coordinates of detected objects
+            boxes = self.interpreter.get_tensor(self.output_details[0]['index'])[0]
             classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]  # Class index of detected objects
             scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]  # Confidence of detected objects
 

@@ -2,7 +2,8 @@
 import cv2
 import numpy as np
 
-from mountain_climber import MountainClimber
+# from mountain_climber import MountainClimber
+from motors import MidMotor
 from tensor_setup import TensorSetup
 
 
@@ -20,7 +21,7 @@ class PictogramCentering:
         self.labels = tensor_config.labels
         self.min_conf_threshold = 0.5
 
-    def center_robot_on_pictogram(self, object_label, videostream, mountain_climber :MountainClimber):
+    def center_robot_on_pictogram(self, object_label, videostream, mid_motor: MidMotor):
         print(self.labels)
 
         input_mean = 127.5
@@ -32,6 +33,7 @@ class PictogramCentering:
         freq = cv2.getTickFrequency()
 
         # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
+        driving = False
         while True:
 
             # Start timer (for calculating frame rate)
@@ -62,34 +64,36 @@ class PictogramCentering:
                 0]  # Bounding box coordinates of detected objects
             classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]  # Class index of detected objects
             scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]  # Confidence of detected objects
-            # num = interpreter.get_tensor(output_details[3]['index'])[0]  # Total number of detected objects (inaccurate
-            # and not needed)
 
             # Loop over all detections and draw detection box if confidence is above minimum threshold
             for i in range(len(scores)):
                 if ((scores[i] > self.min_conf_threshold) and (scores[i] <= 1.0)):
                     object_name = self.labels[
                         int(classes[i])]  # Look up object name from "labels" array using class index
-                    # Get bounding box coordinates and draw box
-                    # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
+
                     ymin = int(max(1, (boxes[i][0] * imH)))
                     xmin = int(max(1, (boxes[i][1] * imW)))
                     ymax = int(min(imH, (boxes[i][2] * imH)))
                     xmax = int(min(imW, (boxes[i][3] * imW)))
                     if object_label == object_name:
-                        print(xmin, xmax)
                         label_center = (xmax + xmin) / 2
                         print(label_center)
-                        if label_center < frame_center:
-                            print("move left")
-                            mountain_climber.mid_motor.accelerate_forward(254)
-                        elif label_center > frame_center:
-                            print("move right")
-                            mountain_climber.mid_motor.accelerate_backwards(254)
-                        else:
+                        print(frame_center)
+
+                        if frame_center + 10 > label_center > frame_center - 10:
                             print("haalt")
-                            mountain_climber.mid_motor.accelerate_forward(0)
+                            mid_motor.accelerate_forward(0)
                             return
+                        elif label_center < frame_center:
+                            print("move left")
+                            if not driving:
+                                mid_motor.accelerate_forward(250)
+                                driving = True
+                        elif label_center > frame_center - 10:
+                            print("move right")
+                            if not driving:
+                                mid_motor.accelerate_backwards(250)
+                                driving = True
 
                     cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (10, 255, 0), 2)
 

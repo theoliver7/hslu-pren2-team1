@@ -24,14 +24,12 @@ class MountainClimber:
         self.rotation = motors.StepperMotor(self.uart)
         self.lift = motors.LiftMotor(self.uart)
 
-        self.picto_tensor_config = tensor_setup.TensorSetup("detect_picto_v2.tflite", "labelmap.txt")
+        self.picto_tensor_config = tensor_setup.TensorSetup("detect.tflite", "labelmap.txt")
         self.stair_tensor_config = tensor_setup.TensorSetup("detect_brick_v2.tflite", "labelmap_path.txt")
 
         self.picto_detector = pictogram_detector.PictogramDetector(self.picto_tensor_config)
         self.picto_centering = pictogram_centering.PictogramCentering(self.picto_tensor_config)
         self.path_finder = Pathfinder(self.stair_tensor_config)
-
-        self.video_stream = VideoStream()
 
         self.detected_pictogram = None
         self.path = None
@@ -39,18 +37,18 @@ class MountainClimber:
         self.touched = False
         # TODO update with correct position
         self.picto_dict = {
-            "Hammer": 1,
-            "Taco": 3,
-            "Ruler": 4,
-            "Paint": 5,
-            "Pen": 6
+            "hammer": 1,
+            "taco": 3,
+            "ruler": 4,
+            "paint": 5,
+            "pen": 6
         }
-
-        self.buttons.whatever_btn.when_pressed = lambda: print("Hello, WhateverButton start!")
-        self.buttons.leftFront_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0); self.touched = True
-        self.buttons.leftBack_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0); self.touched = True
-        self.buttons.rightFront_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0);self.touched = True
-        self.buttons.rightBack_btn.when_pressed = lambda: self.mid_motor.accelerate_forward(0);self.touched = True
+        self.clockwise = False
+        self.buttons.whatever_btn.when_pressed = self.__set_clockwise
+        self.buttons.leftFront_btn.when_pressed = lambda: self.__stop_motors()
+        self.buttons.leftBack_btn.when_pressed = lambda: self.__stop_motors()
+        self.buttons.rightFront_btn.when_pressed = lambda: self.__stop_motors()
+        self.buttons.rightBack_btn.when_pressed = lambda: self.__stop_motors()
 
     # Robot waits for start command
     def wait_for_start(self):
@@ -59,31 +57,37 @@ class MountainClimber:
 
     # Robot looks for and identifies the given pictogram
     def search_identify_pictogram(self):
-        print("looking for pictogram")
-        img_path = "/home/pi/Desktop/picto.jpg"
-        # Take picture
-        Camera.take_picture_to_path(img_path)
+        degree = 0
+        while self.detected_pictogram is None and degree < 360:
+            print("looking for pictogram")
+            img_path = "/home/pi/Desktop/picto.jpg"
+            # Take picture
+            Camera.take_picture_to_path(img_path)
+            # Analyze picture
+            self.detected_pictogram = self.picto_detector.analyze_picture(img_path)
+            # Retry on fail (should we turn the robot? Is this even needed?)
+            if self.detected_pictogram is None:
+                print("No Image recognized, retrying...")
+                degree += 45
+                self.rotation.go_to_degree_onground(degree)
 
-        # Analyze picture
-        self.detected_pictogram = self.picto_detector.analyze_picture(img_path)
-        # Retry on fail (should we turn the robot? Is this even needed?)
         if self.detected_pictogram is None:
-            print("No Image recognized, retrying...")
-            self.search_identify_pictogram()
-
+            print("not detected using ruler")
+            self.detected_pictogram = "ruler"
         print("image recognized: " + self.detected_pictogram)
+
         self.led.set_green(200)
-        self.rotation.go_to_reference_onground()
+        self.rotation.go_to_degree_onground(0)
 
     def plan_path(self):
         print("starting path planning")
-        img = "/home/pi/Desktop/stair.jpg"
-        # img = "C:/dev/git/pren2-team1/stair-climber/test/images/stair8.jpg"
-        # self.detectedPictogram = "Hammer"
-        Camera.take_picture_to_path(img)
-        matrix, start = self.path_finder.transform_image_to_matrix(img)
-        # TODO determine start position
+        self.lift.frontUp()
+        img_path = "/home/pi/Desktop/stair.jpg"
+        Camera.take_picture_to_path(img_path)
+        matrix, start = self.path_finder.transform_image_to_matrix(img_path)
         self.path = self.path_finder.compute_path(matrix, (start, 6), (self.picto_dict.get(self.detected_pictogram), 0))
+        # self.path = [(3, 6), (3, 5), (3, 4), (2, 4), (2, 3), (2, 2), (2, 1), (2, 0), (3, 0), (4, 0)]
+        self.lift.frontDown()
         print(self.path)
 
     # Robot drives to stairs
@@ -93,24 +97,27 @@ class MountainClimber:
 
         # drive forward
         self.lift.driveMode_middleUp()
-        time.sleep(3)
         self.outer_motors.accelerate_forward(speed)
-        distance_threshhold = 70  # in cm
+        distance_threshold = 70  # in cm
 
         # noop while robot is far from stairs
-        while self.ultra_sonic.get_distance1() > distance_threshhold \
-                and self.ultra_sonic.get_distance2() > distance_threshhold:
-            time.sleep(0.5)
+        while self.ultra_sonic.get_distance1() > distance_threshold \
+                and self.ultra_sonic.get_distance2() > distance_threshold:
+            time.sleep(0.2)
             pass
 
         # Closer than threshhold
         print("slowing down")
+        time.sleep(0.5)
         self.outer_motors.accelerate_forward(0)
 
+        self.lift.driveMode_middleUp()
+        self.rotation.go_to_degree_inair(180)
+        self.lift.driveMode_middleDown()
+
     # Robot climbs up stairs
-    # TODO: Number of stairs from image-recognition
     def climb_stairs(self):
-        instructions = self.__transform_path()
+        instructions = self.path_finder.transform_path(self.path)
         print(instructions)
         instructions_cnt = len(instructions) - 1
         for idx, instruction in enumerate(instructions):
@@ -118,65 +125,60 @@ class MountainClimber:
             if instructions_length == 1:
                 print("going up directly")
             else:
-                degree = 0
-                if instruction[0] < instruction[1]:
-                    print("going right then up ")
-                    degree = 90
-                elif instruction[0] > instruction[1]:
-                    print("going left then up")
-                    degree = 270
-                # Todo check this stuff
-
                 self.lift.driveMode_middleUp()
-                self.rotation.go_to_degree_inair(degree)
+                self.rotation.go_to_degree_inair(90)
                 self.lift.driveMode_middleDown()
                 self.lift.rotationMode()
-                self.mid_motor.accelerate_forward(100)
-                time.sleep(1 * instructions_length)
+                if instruction[0] < instruction[1]:
+                    print("going left then up ")
+                    self.mid_motor.accelerate_backwards(254)
+                elif instruction[0] > instruction[1]:
+                    print("going right then up")
+                    self.mid_motor.accelerate_forward(254)
+                # Todo check this stuff
+                # when there is resistance time must be longer
+                time.sleep(1.2 * instructions_length)
                 self.mid_motor.accelerate_forward(0)
-                self.lift.lower_outer_axes()
-                self.lift.driveMode_middleUp()
-                self.rotation.go_to_reference_inair()
+                self.mid_motor.accelerate_backwards(0)
+                if idx != len(instructions):
+                    self.lift.lower_outer_axes()
+                    self.lift.driveMode_middleUp()
+                    self.rotation.go_to_degree_inair(180)
+
                 if self.touched: print("I hit a brick or so")
 
             if instructions_cnt != idx:
-                self.__climb_one_stair()
+                self.lift.climb_stair()
 
     def drive_into_flag(self):
         print("going to flag")
+
         self.lift.driveMode_middleUp()
+        self.rotation.go_to_reference_inair()
         self.rotation.go_to_degree_inair(90)
         self.lift.driveMode_middleDown()
         self.lift.rotationMode()
+        self.lift.frontUp()
+        self.video_stream = VideoStream()
         self.video_stream.start()
-        self.picto_centering.center_robot_on_pictogram(self.detected_pictogram,self.video_stream, self)
-
+        self.picto_centering.center_robot_on_pictogram(self.detected_pictogram, self.video_stream, self.mid_motor)
+        self.lift.frontDown()
+        self.lift.driveMode_middleUp()
+        self.rotation.go_to_degree_inair(180)
+        self.lift.driveMode_middleDown()
+        self.lift.rotationMode()
+        self.lift.lower_outer_axes()
+        self.lift.frontUp()
+        self.outer_motors.accelerate_forward(254)
+        self.mid_motor.accelerate_forward(254)
+        time.sleep(11)
+        self.outer_motors.accelerate_forward(0)
+        self.mid_motor.accelerate_forward(0)
         # Robot climbs on single stair
-    def __climb_one_stair(self):
-        # self.__find_climable_position()
-        print("start climbing to next step")
-        self.lift.climb_stair()
 
-    # Robot finds open path and positions himself in front ready to climb the next step
-    # TODO: Find position by looking at PathFinding Matrix
-    def __find_climable_position(self):
-        print("looking for climable position")
-        # How do we know how far to the left/right we can go infront of the first step
-        clear_threshhold = 10
-        speed = 200
+    def __set_clockwise(self):
+        self.clockwise = True
 
-    def __transform_path(self):
-        tmp_step = 99
-        tmp_step_directions = None
-        list_of_instructions = list()
-        for step in self.path:
-            if tmp_step != step[1]:
-                if tmp_step_directions is not None: list_of_instructions.append(tmp_step_directions)
-                tmp_step_directions = list()
-                tmp_step = step[1]
-                tmp_step_directions.append(step[0])
-            else:
-                tmp_step_directions.append(step[0])
-        list_of_instructions.append(tmp_step_directions)
-
-        return list_of_instructions
+    def __stop_motors(self):
+        self.mid_motor.accelerate_forward(0)
+        self.touched = True

@@ -2,16 +2,13 @@ from mountain_climber import MountainClimber
 
 climber = MountainClimber()
 
-# climber.climb_stairs()
-
-
 # Wait for start_button
-climber.wait_for_start()
+# climber.wait_for_start()
 # Scan for pictogram
 climber.search_identify_pictogram()
 # Plan Path
 climber.plan_path()
-# #Drive to stairs
+# Drive to stairs
 climber.drive_to_stairs()
 # Climb one stair
 climber.climb_stairs()
