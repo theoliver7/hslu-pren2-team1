@@ -7,7 +7,7 @@ class MotorTestCase(unittest.TestCase):
 
     def test_stepper_motor(self):
         stepper = StepperMotor()
-        stepper.go_to_degree(90)
+        stepper.go_to_degree_inair(90)
         self.assertEqual(True, True)
 
 

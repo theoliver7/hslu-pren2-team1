@@ -18,11 +18,12 @@ class Uart:
     def write_uart_cmd(self, message):
         print('# bytes sent: '+str(self.ser.write(message)))
         response = self.ser.read(7)
-        print(list(response))
+        print("uart response: "+str(list(response)))
 
         if response == self.error:
             print("error response from tiny") #TODO: retry?
-
+            response = self.ser.read(7)
+            print("uart retry response: " + str(list(response)))
         return response
 
 

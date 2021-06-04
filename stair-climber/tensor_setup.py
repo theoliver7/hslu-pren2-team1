@@ -12,19 +12,14 @@ class TensorSetup:
     height = 300
     width = 300
     labels = []
-    min_conf_threshold=0.5
 
-    def __init__(self):
+    def __init__(self, graph_name, labelmap_name):
         # Define and parse input arguments
         # Default values are fine. Make sure detect.tflite & labelmap.txt are accessible
 
-        MODEL_NAME = "/home/pi/Desktop/tflite/"
-        GRAPH_NAME = "detect.tflite"
-        LABELMAP_NAME = "labelmap.txt"
-        RES = "1280x720"
-        min_conf_threshold = 0.5
-        resW, resH = RES.split('x')
-        imW, imH = int(resW), int(resH)
+        MODEL_NAME = "tflite"
+        GRAPH_NAME = graph_name
+        LABELMAP_NAME = labelmap_name
 
         # Import TensorFlow libraries
         # If tflite_runtime is installed, import interpreter from tflite_runtime, else import from regular tensorflow

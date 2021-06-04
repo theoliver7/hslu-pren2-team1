@@ -100,6 +100,18 @@ class LiftMotor:
         # Check for valid response
         return list(cmd) == list(response)
 
+    def frontUp(self):
+        cmd = bytes([31, 0, 0, 31, 0, 0, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
+
+    def frontDown(self):
+        cmd = bytes([32, 0, 0, 32, 0, 0, 10])
+        response = self.uart.write_uart_cmd(cmd)
+        # Check for valid response
+        return list(cmd) == list(response)
+
     # Steigt eine Treppenstufe hoch, Roboter muss vor einer Stufe sein
     def climb_stair(self): 
         cmd = bytes([50, 0, 0, 50, 0, 0, 10])
