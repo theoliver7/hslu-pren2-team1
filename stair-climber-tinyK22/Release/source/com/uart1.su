@@ -1,0 +1,11 @@
+uart1.c:38:6:UART1_RX_TX_IRQHandler	16	static
+uart1.c:68:6:UART1_ERR_IRQHandler	0	static
+uart1.c:84:6:uart1WriteChar	12	static
+uart1.c:97:6:uart1WriteCommand	16	static
+uart1.c:113:6:uart1Write	8	static
+uart1.c:127:6:uart1WriteLine	8	static
+uart1.c:139:6:uart1ReadChar	12	static
+uart1.c:172:10:uart1ReadLine	24	static
+uart1.c:193:6:uart1HasLineReceived	12	static
+uart1.c:213:10:uart1RxBufCount	0	static
+uart1.c:223:6:uart1Init	0	static

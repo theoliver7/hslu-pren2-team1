@@ -1,0 +1,3 @@
+ultrasonic.c:59:10:ULTRASONIC_get_Distance	0	static
+ultrasonic.c:92:13:FTM1CH0_IRQHandler	0	static
+ultrasonic.c:109:13:FTM1TOF_IRQHandler	0	static

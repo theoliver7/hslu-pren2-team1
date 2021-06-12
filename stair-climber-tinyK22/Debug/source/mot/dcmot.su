@@ -1,0 +1,7 @@
+dcmot.c:35:13:DCMOT_short_delay	16	static
+dcmot.c:45:13:DCMOT_fine_startup_backwards	32	static
+dcmot.c:64:13:DCMOT_fine_startup_vorward	32	static
+dcmot.c:86:6:DCMOT_sync_vorward	24	static
+dcmot.c:119:6:DCMOT_sync_backward	24	static
+dcmot.c:152:6:DCMOT_vorward	24	static
+dcmot.c:178:6:DCMOT_backward	24	static

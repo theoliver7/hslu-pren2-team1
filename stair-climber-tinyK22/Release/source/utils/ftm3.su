@@ -1,0 +1,3 @@
+ftm3.c:32:6:Default_Handler_FTM3	0	static
+ftm3.c:52:6:FTM3_IRQHandler	8	static
+ftm3.c:78:6:FTM3_INIT	0	static

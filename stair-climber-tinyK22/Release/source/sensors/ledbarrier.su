@@ -1,0 +1,3 @@
+ledbarrier.c:92:6:LEDBARRIER_FRONT_GET	0	static
+ledbarrier.c:97:6:LEDBARRIER_BACK_GET	0	static
+ledbarrier.c:102:6:LEDBARRIER_STEPPER_GET	0	static

@@ -1,0 +1,5 @@
+dcmot.c:45:13:DCMOT_fine_startup_backwards.part.0	8	static
+dcmot.c:86:6:DCMOT_sync_vorward	0	static
+dcmot.c:119:6:DCMOT_sync_backward	0	static
+dcmot.c:152:6:DCMOT_vorward	8	static
+dcmot.c:178:6:DCMOT_backward	8	static

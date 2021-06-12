@@ -1,0 +1,4 @@
+led.c:34:6:LED_RED_dim	8	static
+led.c:46:6:LED_GREEN_dim	8	static
+led.c:58:6:LED_BLUE_dim	8	static
+led.c:67:6:LED_INIT	0	static

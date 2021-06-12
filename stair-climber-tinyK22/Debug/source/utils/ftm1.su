@@ -1,0 +1,5 @@
+core_cm4.h:1679:22:__NVIC_EnableIRQ	16	static
+core_cm4.h:1809:22:__NVIC_SetPriority	16	static
+ftm1.c:33:6:Default_Handler_FTM1	4	static
+ftm1.c:47:6:FTM1_IRQHandler	8	static
+ftm1.c:61:6:FTM1_INIT	8	static

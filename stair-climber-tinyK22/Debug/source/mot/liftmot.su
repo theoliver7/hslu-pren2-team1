@@ -1,0 +1,17 @@
+liftmot.c:43:13:LIFTMOT_short_delay	16	static
+liftmot.c:49:13:wait	24	static
+liftmot.c:59:13:LIFTMOT_fine_startup_down	32	static
+liftmot.c:79:13:LIFTMOT_fine_startup_up	32	static
+liftmot.c:101:6:LIFTMOT_sync_up	24	static
+liftmot.c:121:6:LIFTMOT_sync_down	24	static
+liftmot.c:143:6:LIFTMOT_up	16	static
+liftmot.c:166:6:LIFTMOT_down	16	static
+liftmot.c:193:6:LIFTMOT_DRIVE_POS_MIDDLEUP	8	static
+liftmot.c:227:6:LIFTMOT_DRIVE_POS_MIDDLEDOWN	8	static
+liftmot.c:272:6:LIFTMOT_DRIVE_POS_OUTERGROUND	8	static
+liftmot.c:287:6:LIFTMOT_FRONT_GROUND	8	static
+liftmot.c:307:6:LIFTMOT_DRIVE_POS_OUTERUP	8	static
+liftmot.c:322:6:LIFTMOT_GOTO_TOP	16	static
+liftmot.c:355:6:LIFTMOT_GOTO_BOTTOM	16	static
+liftmot.c:389:6:LIFTMOT_MIDSEGM_TOP	8	static
+liftmot.c:437:6:LIFTMOT_LETDOWN	8	static

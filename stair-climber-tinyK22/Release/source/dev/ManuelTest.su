@@ -1,0 +1,6 @@
+ManuelTest.c:121:6:delay_sek	0	static
+ManuelTest.c:41:6:ManuelTest_Run	8	static
+ManuelTest.c:75:6:liftmot_test	8	static
+ManuelTest.c:82:6:dcmot_test	16	static
+ManuelTest.c:130:6:ledbarrier_test	8	static
+ManuelTest.c:138:6:button_test	8	static
