@@ -2,7 +2,7 @@ import time
 
 from communication import motors, sensors
 from detection import pictogram_centering, pictogram_detector, tensor_setup
-from camera import Camera
+from camera.camera import Camera
 from navigation.path_finder import Pathfinder
 from communication.uart import Uart
 from camera.video_stream import VideoStream
