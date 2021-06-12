@@ -87,10 +87,8 @@ class Pathfinder:
         grid = Grid(matrix=matrix)
 
         print(start, end)
-        # start = grid.node(start[0], start[1])
-        # end = grid.node(end[0], end[1])
-        start = grid.node(4, 6)
-        end = grid.node(4, 0)
+        start = grid.node(start[0], start[1])
+        end = grid.node(end[0], end[1])
         finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
         path, runs = finder.find_path(start, end, grid)
 
