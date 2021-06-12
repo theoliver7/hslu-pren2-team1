@@ -119,6 +119,14 @@ class Climber:
         instructions_cnt = len(instructions) - 1
         for idx, instruction in enumerate(instructions):
             instructions_length = len(instruction)
+
+            # Reset reference so robot drives straighter against stairs
+            if idx == 1:
+                self.lift.driveMode_middleUp()
+                self.rotation.go_to_reference_inair()
+                self.rotation.go_to_degree_inair(180)
+                self.lift.driveMode_middleDown()
+
             if instructions_length == 1:
                 print("going up directly")
             else:
