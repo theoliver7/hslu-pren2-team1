@@ -1,14 +1,11 @@
 import time
 
-import motors
-import pictogram_centering
-import pictogram_detector
-import sensors
-import tensor_setup
+from communication import motors, sensors
+from detection import pictogram_centering, pictogram_detector, tensor_setup
 from camera import Camera
-from path_finder import Pathfinder
-from uart import Uart
-from video_stream import VideoStream
+from navigation.path_finder import Pathfinder
+from communication.uart import Uart
+from camera.video_stream import VideoStream
 
 
 class Climber:

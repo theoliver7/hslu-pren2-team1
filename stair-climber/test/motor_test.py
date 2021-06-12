@@ -1,6 +1,6 @@
 import unittest
 
-from motors import StepperMotor
+from communication.motors import StepperMotor
 
 
 class MotorTestCase(unittest.TestCase):
