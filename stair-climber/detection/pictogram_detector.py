@@ -43,18 +43,14 @@ class PictogramDetector:
         image_resized = cv2.resize(image_rgb, (self.width, self.height))
         input_data = np.expand_dims(image_resized, axis=0)
 
-        # Normalize pixel values if using a floating model
         if self.floating_model:
             input_data = (np.float32(input_data) - input_mean) / input_std
 
-        # Perform the actual detection by running the model with the image as input
         self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
         self.interpreter.invoke()
 
-        # Retrieve detection results
-        # Bounding box coordinates of detected objects
-        classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]  # Class index of detected objects
-        scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]  # Confidence of detected objects
+        classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]
+        scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]
 
         old_score = 0
         tmp_name = self.labels[int(classes[0])]
@@ -93,21 +89,15 @@ class PictogramDetector:
             frame_resized = cv2.resize(frame_rgb, (self.width, self.height))
             input_data = np.expand_dims(frame_resized, axis=0)
 
-            # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
             if self.floating_model:
                 input_data = (np.float32(input_data) - 127.5) / 127.5
 
-            # Perform the actual detection by running the model with the image as input
             self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
             self.interpreter.invoke()
 
-            # Retrieve detection results
-            # Bounding box coordinates of detected objects
-            boxes = self.interpreter.get_tensor(self.output_details[0]['index'])[0]
-            classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]  # Class index of detected objects
-            scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]  # Confidence of detected objects
+            classes = self.interpreter.get_tensor(self.output_details[1]['index'])[0]
+            scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]
 
-            # Loop over all detections and draw detection box if confidence is above minimum threshold
 
             oldScore = 0
 
@@ -118,8 +108,7 @@ class PictogramDetector:
                     if scores[i] > oldScore:
                         oldScore = scores[i]
                         # Get Label
-                        object_name = self.labels[
-                            int(classes[i])]  # Look up object name from "labels" array using class index
+                        object_name = self.labels[int(classes[i])]
                         print(scores[i])
                         print(classes[i])
                         print(object_name)
