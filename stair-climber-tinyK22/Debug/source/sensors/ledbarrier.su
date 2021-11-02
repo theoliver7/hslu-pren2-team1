@@ -1,4 +1,0 @@
-fsl_gpio.h:223:24:GPIO_PinRead	16	static
-ledbarrier.c:92:6:LEDBARRIER_FRONT_GET	8	static
-ledbarrier.c:97:6:LEDBARRIER_BACK_GET	8	static
-ledbarrier.c:102:6:LEDBARRIER_STEPPER_GET	8	static

@@ -1,6 +1,0 @@
-ExitOnError 1
-r
-loadfile "C:\Users\mijow\Documents\HSLU\4_Semester\PREN2\StairClimber_CProjekte\Teil_Manuel\StairClimberTinyK22_1.3\Stairclimber_TinyK22\Debug\Stairclimber_TinyK22.hex"
-qc
-
-qc

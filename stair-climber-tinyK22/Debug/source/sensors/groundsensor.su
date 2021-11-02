@@ -1,2 +1,0 @@
-fsl_gpio.h:223:24:GPIO_PinRead	16	static
-groundsensor.c:22:6:GET_GROUND_SENSOR	8	static

@@ -1,6 +1,0 @@
-fsl_gpio.h:162:20:GPIO_PinWrite	32	static
-ultrasonic.c:40:13:ULTRASONIC_Disable_TOF	4	static
-ultrasonic.c:45:13:ULTRASONIC_Enable_TOF	4	static
-ultrasonic.c:59:10:ULTRASONIC_get_Distance	24	static
-ultrasonic.c:92:13:FTM1CH0_IRQHandler	8	static
-ultrasonic.c:109:13:FTM1TOF_IRQHandler	8	static
